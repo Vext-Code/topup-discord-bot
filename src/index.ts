@@ -27,11 +27,8 @@ app.use(express.json());
 // Buat router baru untuk endpoint yang terkait dengan Discord
 const discordApiRouter = Router();
 
-// Endpoint untuk mengirim DM, sekarang path-nya relatif terhadap '/discord'
-// Jadi, URL lengkapnya akan menjadi /discord/send-dm
+// Pastikan router menangani path relatif terhadap /discord
 discordApiRouter.post('/send-dm', handleOrderRequest(discordClient));
-
-// Contoh endpoint dasar untuk path /discord/
 discordApiRouter.get('/', (req: Request, res: Response) => {
   res.send('Discord Bot HTTP Server - Discord specific endpoints are active!');
 });
