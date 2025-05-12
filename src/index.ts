@@ -1,5 +1,5 @@
 // src/server.ts (atau nama file server utama Anda)
-import express, { Request, Response } from 'express';
+import express, { Request, Response, Router } from 'express'; // Tambahkan Router
 import { Client, GatewayIntentBits } from 'discord.js';
 import * as dotenv from 'dotenv';
 import { handleOrderRequest } from './utils/sendOrderDM'; // Sesuaikan path jika perlu
@@ -24,15 +24,20 @@ const discordClient = new Client({
 // Middleware untuk parsing JSON body
 app.use(express.json());
 
-// Endpoint untuk mengirim DM
-// Perhatikan bahwa kita memanggil handleOrderRequest dengan discordClient
-// untuk mendapatkan fungsi handler yang sebenarnya.
-app.post('/api/send-dm', handleOrderRequest(discordClient));
+// Buat router baru untuk endpoint yang terkait dengan Discord
+const discordApiRouter = Router();
 
-// Contoh endpoint dasar
-app.get('/', (req: Request, res: Response) => {
-  res.send('Discord Bot HTTP Server is running!');
+// Endpoint untuk mengirim DM, sekarang path-nya relatif terhadap '/discord'
+// Jadi, URL lengkapnya akan menjadi /discord/send-dm
+discordApiRouter.post('/send-dm', handleOrderRequest(discordClient));
+
+// Contoh endpoint dasar untuk path /discord/
+discordApiRouter.get('/', (req: Request, res: Response) => {
+  res.send('Discord Bot HTTP Server - Discord specific endpoints are active!');
 });
+
+// Gunakan router ini dengan awalan /discord
+app.use('/discord', discordApiRouter);
 
 // Setup event handlers untuk Discord bot
 setupBotHandlers(discordClient);
@@ -49,7 +54,8 @@ const startServer = async () => {
 
     app.listen(port, () => {
       console.log(`HTTP server listening on port ${port}`);
-      console.log(`Endpoint /api/send-dm siap menerima permintaan POST.`);
+      console.log(`Discord API endpoints available under /discord/`);
+      console.log(`  -> POST /discord/send-dm siap menerima permintaan.`);
     });
   } catch (error) {
     console.error('Gagal memulai server atau login ke Discord:', error);
@@ -63,3 +69,4 @@ startServer();
 // Contoh .env:
 // TOKEN_DISCORD=token_bot_discord_anda
 // PORT=3000 (opsional)
+// PUBLIC_URL=http://localhost:3000 (atau URL publik Anda jika di-deploy)
