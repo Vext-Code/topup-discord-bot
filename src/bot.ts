@@ -2,24 +2,18 @@ import { Client, GatewayIntentBits, Events, Interaction, ButtonInteraction, Cach
 import { fetchProducts } from './utils/fetchProducts';
 import { execute as executeTopUp, handleCategorySelection, handleBrandSelection } from './commands/products';
 import axios from 'axios'; // Pastikan axios diimpor
-import * as dotenv from 'dotenv';
-import { create } from 'domain';
-dotenv.config(); // Pastikan variabel environment dimuat
 
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages, // Ditambahkan dari index.ts
-    GatewayIntentBits.MessageContent, // Ditambahkan dari index.ts
-  ],
-});
+export function setupBotHandlers(client: Client): void {
+  client.once(Events.ClientReady, () => {
+    // Menggunakan client.user dari instance yang di-pass
+    console.log(`Bot aktif sebagai ${client.user?.tag}`);
+  });
 
-client.once(Events.ClientReady, () => {
-  console.log(`Bot aktif sebagai ${client.user?.tag}`);
-});
+  client.on(Events.InteractionCreate, async (interaction: Interaction) => {
+    try {
+      // Logika penanganan interaksi tetap sama,
+      // interaction.client akan merujuk pada instance client yang benar.
 
-client.on(Events.InteractionCreate, async (interaction: Interaction) => {
-  try {
     // Menangani interaksi tombol (button interaction)
     if (interaction.isButton()) {
       const { customId } = interaction;
@@ -245,6 +239,5 @@ client.on(Events.InteractionCreate, async (interaction: Interaction) => {
       }
     }
   }
-});
-
-client.login(process.env.TOKEN_DISCORD); // Menggunakan TOKEN_DISCORD
+  });
+}
