@@ -8,7 +8,8 @@ import { setupBotHandlers } from './bot'; // Impor fungsi setup dari bot.ts
 dotenv.config();
 
 const app = express();
-const port = process.env.PORT || 3000; // Port untuk server HTTP Anda
+// Gunakan variabel environment yang lebih spesifik atau default ke 3001 untuk server HTTP Discord Bot
+const discordHttpPort = process.env.DISCORD_HTTP_PORT || 3001;
 
 // Inisialisasi Discord Client
 const discordClient = new Client({
@@ -49,8 +50,8 @@ const startServer = async () => {
     await discordClient.login(process.env.TOKEN_DISCORD);
     console.log(`Logged in to Discord as ${discordClient.user?.tag}!`);
 
-    app.listen(port, () => {
-      console.log(`HTTP server listening on port ${port}`);
+    app.listen(Number(discordHttpPort), () => { // Pastikan port adalah angka
+      console.log(`HTTP server listening on port ${discordHttpPort}`);
       console.log(`Discord API endpoints available under /discord/`);
       console.log(`  -> POST /discord/send-dm siap menerima permintaan.`);
     });
@@ -65,5 +66,5 @@ startServer();
 // Pastikan Anda memiliki file .env dengan TOKEN_DISCORD
 // Contoh .env:
 // TOKEN_DISCORD=token_bot_discord_anda
-// PORT=3000 (opsional)
+// DISCORD_HTTP_PORT=3001 (opsional, jika tidak di-set akan default ke 3001 dari kode)
 // PUBLIC_URL=http://localhost:3000 (atau URL publik Anda jika di-deploy)
