@@ -2,7 +2,7 @@
 import express, { Request, Response, Router } from 'express'; // Tambahkan Router
 import { Client, GatewayIntentBits } from 'discord.js';
 import * as dotenv from 'dotenv';
-import { handleOrderRequest } from './utils/sendOrderDM'; // Sesuaikan path jika perlu
+import { handleOrderRequest, handleOrderStatusUpdate } from './utils/sendOrderDM'; // Sesuaikan path jika perlu
 import { setupBotHandlers } from './bot'; // Impor fungsi setup dari bot.ts
 
 dotenv.config();
@@ -30,7 +30,7 @@ const discordApiRouter = Router();
 
 // Pastikan router menangani path relatif terhadap /discord
 discordApiRouter.post('/send-dm', handleOrderRequest(discordClient));
-discordApiRouter.post('/send-order-status', handleOrderRequest(discordClient)); //
+discordApiRouter.post('/send-order-status', handleOrderStatusUpdate(discordClient)); //
 discordApiRouter.get('/', (req: Request, res: Response) => {
   res.send('Discord Bot HTTP Server - Discord specific endpoints are active!');
 });
