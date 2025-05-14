@@ -30,6 +30,7 @@ const discordApiRouter = Router();
 
 // Pastikan router menangani path relatif terhadap /discord
 discordApiRouter.post('/send-dm', handleOrderRequest(discordClient));
+discordApiRouter.post('/send-order-status', handleOrderRequest(discordClient)); //
 discordApiRouter.get('/', (req: Request, res: Response) => {
   res.send('Discord Bot HTTP Server - Discord specific endpoints are active!');
 });
