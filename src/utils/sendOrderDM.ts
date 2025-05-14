@@ -28,10 +28,10 @@ price
       .addFields({
         name: '🛒 Detail Pesanan',
         value: [
-          `> 🆔 Trx ID : \`${trxId}\``,
-          `> 📦 Produk     : ${product}`,
-          `> 🏠 Tujuan     : ${target}`,
-          `> 💰 Harga      : Rp ${price.toLocaleString('id-ID')}`,
+          `> 🆔 Trx ID: \`${trxId}\``,
+          `> 📦 Produk: ${product}`,
+          `> 🏠 Tujuan: ${target}`,
+          `> 💰 Harga: Rp ${price.toLocaleString('id-ID')}`,
         ].join('\n'),
         inline: false,
       });
@@ -50,20 +50,25 @@ export const sendOrderStatusDM = async (
   client: Client,
   discordId: string,
   trxId: string,
-  status: 'success' | 'failed'
+  product: string,
+  target: string,
+  status: 'sukses' | 'gagal' | 'pending'
 ) => {
   try {
     const user = await client.users.fetch(discordId);
-    const isSuccess = status === 'success';
+    const isSuccess = status === 'sukses';    
+    const isPending = status === 'pending';
 
     const embed = new EmbedBuilder()
-      .setTitle(isSuccess ? '✅️ Pesanan Berhasil' : '❌ Pesanan Gagal')
-      .setColor(isSuccess ? 0x00FF00 : 0xFF0000) // Green (65280) for success, Red for failed
+      .setTitle(isSuccess ? '✅️ Pesanan Berhasil' : isPending ? '⏳ Pesanan Dalam Proses' : '❌ Pesanan Gagal')
+      .setColor(isSuccess ? 0x00FF00 : isPending ? 0xFFA500 : 0xFF0000) // Green for success, Orange for pending, Red for failed
       .addFields({
         name: '🛒 Detail Pesanan', // Matching field name from example
         value: [
-          `> 🆔 Trx ID : \`${trxId}\``,
-          `> 📊 Status      : ${isSuccess ? 'Sukses' : 'Gagal'}`,
+          `> 🆔 Trx ID: \`${trxId}\``,
+          `> 📦 Produk: ${product}`,
+          `> 🏠 Tujuan: ${target}`,
+          `> 📊 Status: ${status === 'sukses' ? 'Sukses' : status === 'pending' ? 'Pending' : 'Gagal'}`, // Keep the status message
         ].join('\n'),
         inline: false,
       });
